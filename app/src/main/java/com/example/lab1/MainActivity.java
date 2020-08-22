@@ -2,8 +2,12 @@ package com.example.lab1;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,12 +29,21 @@ public class MainActivity extends AppCompatActivity {
     private boolean flag1 = true;
     private boolean flag2 = true;
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-////        Bitmap bmp = (Bitmap) data.getExtras().get("data");
-////        camImage.setImageBitmap(bmp);
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Bitmap bmp = (Bitmap) data.getExtras().get("data");
+        camImage.setImageBitmap(bmp);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 110) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                takePicture();
+            }
+        }}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +105,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickThird(View view) {
         Log.v("clk3", "Snap button was clicked");
-        Intent shutter = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         Log.v("debug1", "Camera will start now.");
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 110);
+        } else {
+            takePicture();
+        }
+
+    }
+
+    public void takePicture() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 22);
+
 //        startActivityForResult(shutter, 123);
 //        onActivityResult(123, 234, shutter);
     }
