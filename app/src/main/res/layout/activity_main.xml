@@ -49,6 +49,9 @@
         android:layout_weight="0.02"
         android:layout_height="wrap_content"
         android:gravity="top|center_horizontal"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center_horizontal"
         android:text="Same Image!"/>
 
     <Button
